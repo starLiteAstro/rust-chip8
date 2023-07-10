@@ -77,11 +77,10 @@ impl ChipState {
             self.memory[(self.program_counter + 1) as usize],
         ]);
         self.program_counter += 2;
-        self.program_counter & 0x0FFF;
         instruction
     }
 
-    // Break u16 instruction into 4 u8 nibbles
+    /// Break u16 instruction into 4 u8 nibbles
     fn nibbles(n: u16) -> (u8, u8, u8, u8) {
         let n3 = (n >> 12) as u8;
         let n2 = ((n >> 8) & 0b1111) as u8;
@@ -172,7 +171,7 @@ impl ChipState {
                 self.registers[0xF] = !overflow as u8;
             }
             // 8xy6 SHR Vx {, Vy}: set Vx = Vx SHR 1
-            (0x8, x, y, 0x6) => {
+            (0x8, x, _, 0x6) => {
                 self.registers[0xF] = self.registers[x as usize] & 0x1;
                 self.registers[x as usize] >>= 1;
             }
@@ -184,7 +183,7 @@ impl ChipState {
                 self.registers[0xF] = !overflow as u8;
             }
             // 8xyE SHL Vx {, Vy}: set Vx = Vx SHL 1
-            (0x8, x, y, 0xE) => {
+            (0x8, x, _, 0xE) => {
                 self.registers[0xF] = self.registers[x as usize] & 0x1;
                 self.registers[x as usize] <<= 1;
             }
